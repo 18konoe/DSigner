@@ -1,0 +1,37 @@
+﻿{
+  "CertificateSettings": {
+    "SHA1": {
+      "StoreName": "",
+      "SubjectName": "",
+      "Thumbprint": "",
+      "TimestampURL": "",
+      "CrossCertPath": "",
+      "PfxPath": "",
+      "PfxKey": ""
+    },
+    "SHA2": {
+      "StoreName": "",
+      "SubjectName": "",
+      "Thumbprint": "",
+      "TimestampURL": "",
+      "CrossCertPath": "",
+      "PfxPath": "",
+      "PfxKey": ""
+    }
+  },
+  "SigningSettings": {
+    "SignToolPath": "",
+    "SignExtensions": [
+      ".exe",
+      ".dll",
+      ".sys",
+      ".cab"
+    ],
+    "KernelModeExtensions": [
+      ".sys"
+    ],
+    "TrialLimit": 3,
+    "SigntoolProcessTimeoutMilliseconds": 10000 
+  }
+}
+

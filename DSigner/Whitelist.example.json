@@ -1,0 +1,4 @@
+﻿[
+  ".*\\\\WhiteListFile\\.dll$", // sign WhiteListFile.dll file name
+  ".*\\\\WhiteListDir\\\\.+" // sign contain WhiteListDir directory path
+]
