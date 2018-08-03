@@ -1,0 +1,4 @@
+﻿[
+  ".*\\\\BlackListFile\\.dll$", // ignore BlackListFile.dll file name
+  ".*\\\\BlackListDir\\\\.+" // ignore contain BlackListDir directory path
+]
