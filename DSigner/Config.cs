@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using Newtonsoft.Json;
 
 namespace DSigner
@@ -31,29 +32,33 @@ namespace DSigner
     {
         #region Fields
 
-        private const string DefaultConfigurationFileName = "config.json";
+        private static readonly string DefaultConfigurationFileName = Directory.GetParent(Assembly.GetExecutingAssembly().Location) + @"\config.json";
 
         #endregion
 
         public CertificateSettings CertificateSettings { get; set; }
         public SigningSettings SigningSettings { get; set; }
-        public static Config Instance { get; } = ImportConfig();
+        public static Config Instance { get; private set; } = ImportConfig();
 
         private static Config ImportConfig()
+        {
+            return ImportConfig(DefaultConfigurationFileName);
+        }
+        private static Config ImportConfig(string filePath)
         {
             Config config = new Config();
 
             try
             {
-                if (File.Exists(DefaultConfigurationFileName))
+                if (File.Exists(filePath))
                 {
-                    string configString = File.ReadAllText(DefaultConfigurationFileName);
+                    string configString = File.ReadAllText(filePath);
                     config = JsonConvert.DeserializeObject<Config>(configString);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // ignored
+                Console.WriteLine(ex.Message);
             }
 
             return config;
@@ -69,6 +74,10 @@ namespace DSigner
             SigningSettings.KernelModeExtensions = new List<string>();
         }
 
+        public static void SetConfig(string filePath)
+        {
+            Instance = ImportConfig(filePath);
+        }
         public CertificateInformation CertInfo(SigningType signingType)
         {
             if (signingType == SigningType.SHA1)

@@ -72,10 +72,16 @@ namespace DSigner
                     return false;
             }
 
-            List<string> signFileList = new List<string>();
+            if (map.GetOption("-c") != null)
+            {
+                Config.SetConfig(map.GetOption("-c"));
+            }
+
+                List<string> signFileList = new List<string>();
             if (map.GetOption("-d") != null)
             {
                 signFileList = ListUpFilePath(map.GetOption("-d"), Config.Instance.SigningSettings.SignExtensions.ToArray());
+                Console.WriteLine($"Listed files: {signFileList.Count}");
             }
 
             if (map.GetOption("-f") != null)
@@ -89,11 +95,13 @@ namespace DSigner
             if (map.GetOption("-w") != null)
             {
                 signFileList = WhiteListFilter(signFileList, map.GetOption("-w"));
+                Console.WriteLine($"Filtered WhiteList, Remaining: {signFileList.Count}");
             }
 
             if (map.GetOption("-b") != null)
             {
                 signFileList = BlackListFilter(signFileList, map.GetOption("-b"));
+                Console.WriteLine($"Filtered BlackList, Remaining: {signFileList.Count}");
             }
 
             var errorList = _signer.SignAll(signFileList);
@@ -175,6 +183,7 @@ namespace DSigner
         {
             if (!Directory.Exists(folderPath))
             {
+                Console.WriteLine($"{folderPath} is not found.");
                 return null;
             }
 
@@ -195,20 +204,20 @@ namespace DSigner
         }
         private static void ShowUsage()
         {
-            Console.WriteLine($"Usage: DSigner <command> <-f|-d target> [options...]" +
-                              $"" +
-                              $"command:" +
-                              $"  SHA1                 Only SHA-1 signing" +
-                              $"  SHA2                 Only SHA-2 signing" +
-                              $"  Dual                 SHA-1 + SHA-2 signing" +
-                              $"" +
-                              $"target:" +
-                              $"  -f <file path>       Only 1 file signing" +
-                              $"  -d <directory path>  All files signed in specified directory" +
-                              $"" +
-                              $"option:" +
-                              $"  -w <whitelist(json)> Use white list if match listed regular expressions" +
-                              $"  -b <blacklist(json)> Use black list if match listed regular expressions");
+            Console.WriteLine($"Usage: DSigner <command> <-f|-d target> [options...]                     {Environment.NewLine}" +
+                              $"                                                                         {Environment.NewLine}" +
+                              $"command:                                                                 {Environment.NewLine}" +
+                              $"  SHA1                 Only SHA-1 signing                                {Environment.NewLine}" +
+                              $"  SHA2                 Only SHA-2 signing                                {Environment.NewLine}" +
+                              $"  Dual                 SHA-1 + SHA-2 signing                             {Environment.NewLine}" +
+                              $"                                                                         {Environment.NewLine}" +
+                              $"target:                                                                  {Environment.NewLine}" +
+                              $"  -f <file path>       Only 1 file signing                               {Environment.NewLine}" +
+                              $"  -d <directory path>  All files signed in specified directory           {Environment.NewLine}" +
+                              $"                                                                         {Environment.NewLine}" +
+                              $"option:                                                                  {Environment.NewLine}" +
+                              $"  -w <whitelist(json)> Use white list if match listed regular expressions{Environment.NewLine}" +
+                              $"  -b <blacklist(json)> Use black list if match listed regular expressions{Environment.NewLine}");
         }
 
         
