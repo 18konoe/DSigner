@@ -195,15 +195,16 @@ namespace DSigner
             {
                 return false;
             }
-            if (file[0] == '"')
+            if (file.StartsWith("\""))
             {
                 file = filename.Substring(1);
             }
-            if (file[file.Length - 1] == '"')
+            if (file.EndsWith("\""))
             {
                 file = file.Substring(0, file.Length - 1);
             }
 
+            NativeMethods.WinTrust.WINTRUST_FILE_INFO fileInfo = new NativeMethods.WinTrust.WINTRUST_FILE_INFO(file);
             NativeMethods.WinTrust.WinTrustData sWintrustData = new NativeMethods.WinTrust.WinTrustData(
                 NativeMethods.WinTrust.WinTrustDataUIChoice.None,
                 NativeMethods.WinTrust.WinTrustDataRevocationChecks.None,
@@ -211,13 +212,16 @@ namespace DSigner
                 NativeMethods.WinTrust.WinTrustDataStateAction.Verify,
                 0,
                 NativeMethods.WinTrust.WinTrustDataUIContext.Execute,
-                file
+                fileInfo
             );
 
             NativeMethods.WinTrust.WinTrustErrorCode ret = NativeMethods.WinTrust.WinVerifyTrust(
                 IntPtr.Zero,
                 NativeMethods.WinTrust.WINTRUST_ACTION_GENERIC_VERIFY_V2
                 , sWintrustData);
+
+            sWintrustData.Dispose();
+            fileInfo.Dispose();
 
             if (ret != NativeMethods.WinTrust.WinTrustErrorCode.SUCCESS)
             {

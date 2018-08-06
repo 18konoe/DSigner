@@ -27,15 +27,6 @@ namespace DSigner
 {
     public class NativeMethods
     {
-        internal class WTS
-        {
-            [DllImport("kernel32.dll")]
-            internal static extern uint WTSGetActiveConsoleSessionId();
-
-            [DllImport("wtsapi32.dll", SetLastError = true)]
-            internal static extern bool WTSQueryUserToken(UInt32 sessionId, out IntPtr Token);
-        }
-
         internal class WinTrust
         {
             internal static Guid WINTRUST_ACTION_GENERIC_VERIFY_V2 = new Guid(0xaac56b, 0xcd44, 0x11d0, 0x8c, 0xc2, 0x0, 0xc0, 0x4f, 0xc2, 0x95, 0xee);
@@ -129,7 +120,7 @@ namespace DSigner
                     WinTrustDataStateAction stateAction,
                     WinTrustDataProvFlags provFlags,
                     WinTrustDataUIContext uiContext,
-                    string fileName)
+                    WINTRUST_FILE_INFO fileInfo)
                 {
                     this.UIChoice = (uint)uiChoice;
                     this.RevocationChecks = (uint)revocationCheck;
@@ -139,9 +130,8 @@ namespace DSigner
                     this.UIContext = (uint)uiContext;
 
                     ProvFlags |= WinTrustDataProvFlags.DisableMD2andMD4;
-                    WINTRUST_FILE_INFO wtfiData = new WINTRUST_FILE_INFO(fileName);
                     FileInfoPtr = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(WINTRUST_FILE_INFO)));
-                    Marshal.StructureToPtr(wtfiData, FileInfoPtr, false);
+                    Marshal.StructureToPtr(fileInfo, FileInfoPtr, false);
                 }
 
                 #region IDisposable Support
@@ -185,7 +175,7 @@ namespace DSigner
             }
 
             [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-            private class WINTRUST_FILE_INFO : IDisposable
+            public class WINTRUST_FILE_INFO : IDisposable
             {
                 UInt32 cbStruct = (UInt32)Marshal.SizeOf(typeof(WINTRUST_FILE_INFO));
                 IntPtr pcwszFilePath;
@@ -236,14 +226,5 @@ namespace DSigner
                 #endregion
             }
         }
-
-        [DllImport("advapi32.dll", SetLastError = true)]
-        internal static extern bool ImpersonateLoggedOnUser(IntPtr hToken);
-
-        [DllImport("advapi32.dll", SetLastError = true)]
-        internal static extern bool RevertToSelf();
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        internal static extern bool CloseHandle(IntPtr hObject);
     }
 }
