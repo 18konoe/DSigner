@@ -169,7 +169,14 @@ namespace DSigner
 
             if (Config.Instance.SigningSettings.KernelModeExtensions.Contains(Path.GetExtension(signFile)))
             {
-                processStartInfo.Arguments += $" /ac \"{Config.Instance.CertInfo(signingType).CrossCertPath}\"";
+                if (File.Exists(Config.Instance.CertInfo(signingType).CrossCertPath))
+                {
+                    processStartInfo.Arguments += $" /ac \"{Config.Instance.CertInfo(signingType).CrossCertPath}\"";
+                }
+                else
+                {
+                    Console.WriteLine($"Cross Cert file is not exist: {Config.Instance.CertInfo(signingType).CrossCertPath}");
+                }
             }
 
             if (isAppend)
